@@ -1,0 +1,22 @@
+{
+  "name": "pakbot",
+  "version": "1.0.0",
+  "description": "A bot for top alliance",
+  "main": "pakbot.js",
+  "scripts": {
+    "start": "node .",
+    "test": "node tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Enigmind/12MG_bot"
+  },
+  "author": "Enigmind",
+  "license": "MIT",
+  "homepage": "https://github.com/Enigmind/12MG_bot",
+  "dependencies": {
+    "discord-welcome": "^1.5.0",
+    "discord.js": "^11.5.1"
+  },
+  "devDependencies": {}
+}

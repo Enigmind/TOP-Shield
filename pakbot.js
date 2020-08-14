@@ -14,7 +14,7 @@ client.login(CONFIG.botToken);
 function processCommand(message) {
   let fullCommand = message.content.substr(1); // Remove the +
   let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
-  let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
+  let primaryCommand = splitCommand[0]; // The first word directly after the '+' is the command
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
 
   console.log("Command received: " + primaryCommand);
@@ -26,14 +26,18 @@ function processCommand(message) {
       "register ne s'utilise pas comme ça, relis le message d'accueil attentivement, demande de l'aide à un admin, ou tape `+aled` pour une description plus détaillée";
     if (arguments.length < 2) {
       message.channel.send(error_message);
+      return;
     } else {
       if (arguments[0] != "membre" && arguments[0] != "ami") {
         message.channel.send(error_message);
+        return;
       } else {
         // if the noob is a member
-        if (arguments[0] === "membre") {
+        if (arguments[0] === "membre" && arguments[2] != "") {
+          let new_member = message.author
           let guilde = arguments[1];
           let pseudo = arguments[2];
+          let bot_message = message;
           const channel_verif = client.channels.get(`743393443463823411`);
           channel_verif
             .send(
@@ -45,27 +49,19 @@ function processCommand(message) {
                 "Refuser : 🚫\n"
             )
             .then(function (message) {
-              message.react("🤘🏼");
-              message.react("🚫");
-              message
-                .awaitReactions(
-                  (reaction, user) =>
-                    user.id == message.author.id &&
-                    (reaction.emoji.name == "🤘🏼" ||
-                      reaction.emoji.name == "🚫"),
-                  { max: 1, time: 3600000 }
-                )
-                .then((collected) => {
-                  if (collected.first().emoji.name == "🤘🏼") {
-                    message.reply("TODO : accepter le noob");
-                  } else message.reply("todo : le **BAN** ce sale shlag");
-                })
-                .catch(() => {
-                  message.reply(
-                    "Une heure est passé, le meneur semble endormi. Opération annulée..."
-                  );
-                });
+              message.react("🤘🏼").then(() => message.react("🚫"));
+              bot_message = message;
             });
+
+          client.on("messageReactionAdd", (messageReaction, user) => {
+            if (user.bot) return;
+            const { message, emoji } = messageReaction;
+
+            if (emoji.name === "🤘🏼" && message.id === bot_message.id) {
+              console.log(guilde.id)
+              message.channel.send(user.id + " reacted " + emoji + "to the message")
+            }
+          });
         }
       }
     }

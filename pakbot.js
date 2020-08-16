@@ -34,8 +34,9 @@ function processCommand(message) {
       } else {
         // if the noob is a member
         if (arguments[0] === "membre" && arguments[2] != "") {
-          let new_member = message.author
-          let guilde = arguments[1];
+          let new_member = client.guilds.get('539794635283890186').member(message.author.id) 
+          let guilde = message.guild.roles.get(arguments[1].replace(/\W/g, ''))
+          let role_membre = message.guild.roles.get('743400636845916230')
           let pseudo = arguments[2];
           let bot_message = message;
           const channel_verif = client.channels.get(`743393443463823411`);
@@ -57,9 +58,16 @@ function processCommand(message) {
             if (user.bot) return;
             const { message, emoji } = messageReaction;
 
-            if (emoji.name === "🤘🏼" && message.id === bot_message.id) {
-              console.log(guilde.id)
-              message.channel.send(user.id + " reacted " + emoji + "to the message")
+            if (emoji.name === "🤘🏼" && message.id === bot_message.id) {            
+              let meneur = client.guilds.get('539794635283890186').member(user.id)
+              if (meneur.roles.has(guilde.id)) {
+                new_member.addRole(guilde).catch(console.error);
+                new_member.addRole(role_membre).catch(console.error);
+                new_member.setNickname(pseudo)
+                message.channel.send("Les rôles ont été correctement ajoutés")
+              } else {
+                message.channel.send("Tu n'es pas le meneur de " + pseudo + ". Seul le meneur de guilde peut donner les droits aux nouveaux.")
+              }
             }
           });
         }
